@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>博客详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /
+		
+		<link rel="icon" href="favicon.ico" type="image/x-icon">
+		<script src="/static/lib/vue.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/static/lib/axios.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/static/lib/el/el.js" type="text/javascript" charset="utf-8"></script>
+		<!--放最后-->
+		<script src="/static/lib/utils.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="/static/lib/el/el.css" />
+		<link rel="stylesheet" type="text/css" href="/static/css/public.css"/>
+		<link rel="stylesheet" type="text/css" href="/static/css/boke.css"/>
+
+		<script type="text/javascript">
+			var ejs_id = '<%= id%>';
+		</script>
+	</head>
+
+	<body>
+		<div id="app">
+			<!-- <div class="music-box">
+				<audio src="..//static/music/baibai.mp3" controls="controls" autoplay="autoplay" loop="loop">
+					当前浏览器不支持audio
+				</audio>
+			</div> -->
+			
+			<div class="mid" >
+				
+				<div class="mid-left">
+					<div class="boke">
+						<div class="boke-title">
+							<span v-cloak>{{boke.title}}</span>
+						</div>
+						<div class="boke-sim">
+							<span>简介：</span>
+							<span v-cloak>{{boke.sim_content}}</span>
+						</div>
+						<div class="boke-author">
+							<span>by </span>
+							<span v-cloak>{{boke.author}}</span>
+						</div>
+						<div class="line"></div>
+						<div class="boke_content" v-html="boke.content" v-cloak></div>
+						<div class="line"></div>
+						<div class="discuss-box">
+							<div class="dis-title">
+								<span id="tip1">评论：</span>
+								<a href="javascript:;" @click="discusses = discusses.reverse();shunxu = !shunxu" id="tip2">{{shunxu ? '倒序查看' : '顺序查看'}}</a>
+								<a id="tip3" href="javascript:;" @click="openDiscuss(0)">发表评论</a>
+							</div>
+							<!--评论区域-->
+							<div class="discuss" v-for="(item,index) in discusses" v-cloak>
+								<div class="discuss-left">
+									<img v-cloak :src="item.account_avatar" >
+								</div>
+								<div class="discuss-right" >
+									<div class="dis-top">
+										<!--名字-->
+										<div class="name">
+											<span v-cloak>{{item.account_name}}</span>
+										</div>
+										<div id="to" v-cloak v-if="item.to_account_name">
+											<span>回复</span>
+										</div>
+										<!--回复的人-->
+										<div class="who" v-if="item.to_account_name">
+											<span v-cloak>{{item.to_account_name}}</span>
+										</div>
+										：
+										<div class="huifu">
+											<a href="javascript:;" @click="openDiscuss(item.account_id)">回复</a>
+										</div>
+									</div>
+									<div class="dis-bottom">
+										
+										<!--评论详情-->
+										<div class="text">
+											<span v-cloak>{{item.text}}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+				
+				<div class="mid-right">
+					<div class="con">
+						<div class="con-title">
+							<span>我的信息</span>
+						</div>
+						<div class="con-main">
+							<span v-if="!myinfo.islogin" class="login-box">您还未登录，请<a href="javascript:;" @click="dialogFormVisible=true;loginKind = 1;"> 登录 </a>/<a href="javascript:;" @click="dialogFormVisible=true;loginKind = 0;"> 注册 </a></span>
+							<div  v-else>
+								<div class="my-info-avatar">
+									<img :src="myinfo.avatar" >
+								</div>
+								
+								<span class="info-box">欢迎您，{{myinfo.name}}</span>
+								<div class="line"></div>
+								<div class="edit-info-box">
+									<a href="javascript:;" @click="openEditInfo">修改信息</a>
+									<a href="javascript:void(0);">修改密码</a>
+								</div>
+								<span class="logut-box"><a href="javascript:;" @click="logout">退出登录</a></span>
+							</div>
+							
+						</div>
+					</div>
+					<div class="con">
+						<div class="con-title">
+							<span>搜索文章</span>
+						</div>
+						<div class="con-main">
+							<el-input placeholder="请输入内容" v-model="search_key" class="input-with-select">
+								<el-button slot="append" icon="el-icon-search"></el-button>
+							</el-input>
+						</div>
+					</div>
+					
+					<div class="con">
+						<div class="con-title">
+							<span>关于博主</span>
+						</div>
+						<div class="con-main about-author" >
+							<div class="head-img">
+								<img src="/static/static/image/head-img.jpg">
+							</div>
+							<div class="author-info" v-cloak>
+								<div>
+									<div class="author-name"><span>{{indexData.name}}</span></div>
+									<div class="author-watch"><span>10000</span><span>浏览量</span></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			
+			<el-dialog v-cloak :title="loginKind ? '登录' : '注册'" :visible.sync="dialogFormVisible">
+			  <el-form :model="loginForm">
+				<el-form-item label="账号" :label-width="formLabelWidth">
+				  <el-input v-model="loginForm.id" autocomplete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="密码" :label-width="formLabelWidth">
+				  <el-input v-model="loginForm.pwd" autocomplete="off"  show-password></el-input>
+				</el-form-item>
+				<el-form-item label="名字" :label-width="formLabelWidth" v-if="!loginKind">
+				  <el-input v-model="loginForm.name" autocomplete="off"></el-input>
+				</el-form-item>
+				
+			  </el-form>
+			  <div slot="footer" class="dialog-footer" v-cloak>
+				<el-button @click="dialogFormVisible = false" v-cloak>取 消</el-button>
+				<el-button @click="loginKind = !loginKind" v-cloak>{{loginKind ? '去 注 册' : '去 登 录' }}</el-button>
+				<el-button type="primary" @click="login"  v-cloak>{{loginKind ? ' 登 录' : ' 注 册' }}</el-button>
+			  </div>
+			</el-dialog>
+			
+			<el-dialog v-cloak title="评论" :visible.sync="discussFormVisable">
+			  <el-form :model="discuss">
+				<el-form-item label="评论：" >
+				  <el-input v-model="discuss.text" autocomplete="off"></el-input>
+				</el-form-item>
+			  </el-form>
+			  <div slot="footer" class="dialog-footer" v-cloak>
+				<el-button @click="discussFormVisable = false" v-cloak>取 消</el-button>
+				<el-button type="primary" @click="sendDiscuss"  v-cloak>确定</el-button>
+			  </div>
+			</el-dialog>
+			
+			<el-dialog v-cloak title="修改信息" :visible.sync="editInfoVisable">
+				<el-form :model="editInfo">
+					<el-form-item label="名字：">
+						<el-input v-model="editInfo.name" autocomplete="off"></el-input>
+					</el-form-item>
+					<el-form-item label="头像：">
+						<el-upload class="avatar-uploader" action="http://193.112.79.84:80/file-server/upload/img" :show-file-list="false"
+						 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+							<img :src="editInfo.avatar" class="avatar">
+						</el-upload>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer" v-cloak>
+					<el-button @click="editInfoVisable = false" v-cloak>取 消</el-button>
+					<el-button type="primary" @click="goUpdateInfo" v-cloak>确定</el-button>
+				</div>
+			</el-dialog>
+		</div>
+	</body>
+	<script src="/static/js/boke.js" type="text/javascript" charset="utf-8"></script>
+</html>

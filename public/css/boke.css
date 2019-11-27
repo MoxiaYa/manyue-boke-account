@@ -1,0 +1,107 @@
+html,body,#app{
+	width: 100%;
+	
+}
+
+
+
+.con{
+	margin-bottom: 20px;
+}
+.con-title{
+	font-size: 18px;
+	font-weight: 600;
+	padding: 0 0 10px 0;
+	border-bottom: 1px solid black;
+}
+.con-main{
+	padding: 15px 0;
+}
+.boke-title{
+	width: 100%;
+	text-align: center;
+	font-size: 24px;
+	font-weight: 600;
+	letter-spacing: 7px;/*字体间距*/
+	margin: 15px 0;
+}
+.boke-sim{
+	width: 100%;
+	text-align: center;
+	font-size: 16px;
+}
+
+.boke-author{
+	width: 100%;
+	text-align: center;
+	font-size: 16px;
+	margin: 5px 0;
+	
+}
+
+.boke_content{
+	padding: 10px 20px;
+}
+.discuss{
+	display: flex;
+	width: 100%;
+}
+.discuss-left{
+	min-width: 15%;
+	text-align: center;
+	padding: 3px;
+	height: 80px;
+}
+.discuss-left img{
+	width: 80px;
+	height: 80px;
+	border: 3px solid skyblue;
+	box-sizing: border-box;
+	
+}
+
+.dis-top{
+	display: flex;
+	align-items: center;
+	margin: 8px 0;
+}
+.discuss-box .dis-title #tip1{
+	font-size: 18px;
+	font-weight: 600;
+	margin: 10px 0;
+}
+.discuss-box .dis-title{
+	width: 100%;
+	position: relative;
+}
+.discuss-box .dis-title #tip2{
+	position: absolute;
+	right: 100px;
+}
+
+.discuss-box .dis-title #tip3{
+	position: absolute;
+	right: 10px;
+}
+
+.discuss{
+	border: 1px solid cadetblue;
+	margin: 5px 0;
+}
+
+.dis-top .name,.dis-top .who{
+	font-size: 18px;
+	font-weight: 200;
+}
+#to{
+	margin: 0 5px;
+}
+.huifu{
+	position: absolute;
+	right: 10px;
+}
+.discuss-right{
+	max-width:85% ;
+	min-width: 80%;
+	position: relative;
+}

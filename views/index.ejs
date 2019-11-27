@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>墨夏的博客</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+		<script src="/static/lib/vue.js" type="text/javascript" charset="utf-8"></script>
+
+		<script src="/static/lib/axios.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="/static/lib/el/el.js" type="text/javascript" charset="utf-8"></script>
+		<!--放最后-->
+		<script src="/static/lib/utils.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="/static/lib/el/el.css" />
+		<link rel="stylesheet" type="text/css" href="/static/css/public.css" />
+		<link rel="stylesheet" type="text/css" href="/static/css/index.css" />
+
+	</head>
+
+	<body>
+		<div id="app">
+
+
+			<!-- <div class="music-box">
+				<audio src="/static/static/music/baibai.mp3" controls="controls" autoplay="autoplay" loop="loop">
+					当前浏览器不支持audio
+				</audio>
+			</div> -->
+			<div class="header">
+				<img class="header-bg" src="/static/static/image/header-bg.jpg"></img>
+				<div class="header-main">
+					<div class="header-main-mid">
+						<div class="start"><a href="javascript:;" style="">{{indexData.boke_name}}</a></div>
+						<div class="fade-in-down-title">
+							<span style="font-size: 20px;font-weight: 400;color: rgba(255,255,255,0.8);line-height: 24px;margin-bottom: 10px;">{{indexData.index_one}}</span>
+						</div>
+						<div class="fade-in-down-title">
+							<span style="font-size: 16px;font-weight: 400;color: rgba(255,255,255,0.8);line-height: 24px;">{{indexData.index_two}}</span>
+						</div>
+						<div class="fade-in-down-title">
+							<span style="font-size: 16px;font-weight: 400;color: rgba(255,255,255,0.8);line-height: 24px;">{{indexData.index_three}}</span>
+						</div>
+					</div>
+				</div>
+				<div class="header-bottom">
+					<span class="jiantou-xia iconfont xiala" @click="start"></span>
+				</div>
+			</div>
+			<div class="mid" id="mid">
+				<div class="mid-left">
+					<!--博客-->
+					<div class="boke-box" v-for="item in bokes.slice(this_page*6-6,this_page*6)" :key="item.id">
+						<a :href="'boke/'+item.id">
+							<div class="boke-title">
+								<span>{{item.title}}</span>
+							</div>
+							<div class="boke-content">
+								<span>{{item.sim_content}}</span>
+							</div>
+							<div class="boke-bottom">
+								<span class="boke-author">{{item.author}}</span>
+								<span class="boke-date">{{item.create_time}}</span>
+								<span class="boke-watch">浏览:{{item.watch_num}}人</span>
+							</div>
+						</a>
+					</div>
+					<!--博客总数大于6条时，出现分页器-->
+					<div class="pages" v-if="bokes.length > 6" id="pages">
+						<div>
+							<el-pagination background layout="prev, pager, next" :total="bokes.length" :page-size="6" :current-page.sync="this_page"
+							 @current-change="pageChange">
+							</el-pagination>
+						</div>
+					</div>
+				</div>
+				<div class="mid-right">
+					<div class="con">
+						<div class="con-title">
+							<span>我的信息</span>
+						</div>
+						<div class="con-main">
+							<span v-if="!myinfo.islogin" class="login-box">您还未登录，请<a href="javascript:;" @click="dialogFormVisible=true;loginKind = 1;">
+									登录 </a>/<a href="javascript:;" @click="dialogFormVisible=true;loginKind = 0;"> 注册 </a></span>
+							<div v-else>
+								<div class="my-info-avatar">
+									<img :src="myinfo.avatar">
+								</div>
+
+								<span class="info-box" v-cloak>欢迎您，{{myinfo.name}}</span>
+								<div class="line"></div>
+								<div class="edit-info-box">
+									<a href="javascript:;" @click="openEditInfo">修改信息</a>
+									<a href="javascript:void(0);">修改密码</a>
+								</div>
+								<span class="logut-box"><a href="javascript:;" @click="logout">退出登录</a></span>
+							</div>
+
+						</div>
+					</div>
+					<div class="con">
+						<div class="con-title">
+							<span>搜索文章</span>
+						</div>
+						<div class="con-main">
+							<el-input placeholder="请输入内容" v-model="search_key" class="input-with-select">
+								<el-button slot="append" icon="el-icon-search"></el-button>
+							</el-input>
+						</div>
+					</div>
+
+					<div class="con">
+						<div class="con-title">
+							<span>关于博主</span>
+						</div>
+						<div class="con-main about-author">
+							<div class="head-img">
+								<img src="/static/static/image/head-img.jpg">
+							</div>
+							<div class="author-info">
+								<div>
+									<div class="author-name"><span>{{indexData.name}}</span></div>
+									<div class="author-watch"><span>10000</span><span>浏览量</span></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<el-dialog v-cloak :title="loginKind ? '登录' : '注册'" :visible.sync="dialogFormVisible">
+				<el-form :model="loginForm">
+					<el-form-item label="账号" :label-width="formLabelWidth">
+						<el-input v-model="loginForm.id" autocomplete="off"></el-input>
+					</el-form-item>
+					<el-form-item label="密码" :label-width="formLabelWidth">
+						<el-input v-model="loginForm.pwd" autocomplete="off" show-password></el-input>
+					</el-form-item>
+					<el-form-item label="名字" :label-width="formLabelWidth" v-if="!loginKind">
+						<el-input v-model="loginForm.name" autocomplete="off"></el-input>
+					</el-form-item>
+
+				</el-form>
+				<div slot="footer" class="dialog-footer" v-cloak>
+					<el-button @click="dialogFormVisible = false" v-cloak>取 消</el-button>
+					<el-button @click="loginKind = !loginKind" v-cloak>{{loginKind ? '去 注 册' : '去 登 录' }}</el-button>
+					<el-button type="primary" @click="login" v-cloak>{{loginKind ? ' 登 录' : ' 注 册' }}</el-button>
+				</div>
+			</el-dialog>
+
+			<el-dialog v-cloak title="修改信息" :visible.sync="editInfoVisable">
+				<el-form :model="editInfo">
+					<el-form-item label="名字：">
+						<el-input v-model="editInfo.name" autocomplete="off"></el-input>
+					</el-form-item>
+					<el-form-item label="头像：">
+						<el-upload class="avatar-uploader" action="http://193.112.79.84:80/file-server/upload/img" :show-file-list="false"
+						 :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+							<img :src="editInfo.avatar" class="avatar">
+						</el-upload>
+					</el-form-item>
+				</el-form>
+				<div slot="footer" class="dialog-footer" v-cloak>
+					<el-button @click="editInfoVisable = false" v-cloak>取 消</el-button>
+					<el-button type="primary" @click="goUpdateInfo" v-cloak>确定</el-button>
+				</div>
+			</el-dialog>
+
+		</div>
+	</body>
+
+	<script src="/static/js/index.js" type="text/javascript" charset="utf-8"></script>
+</html>
